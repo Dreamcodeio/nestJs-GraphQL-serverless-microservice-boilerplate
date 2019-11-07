@@ -1,0 +1,59 @@
+service:
+  name: boilerplate
+
+package:
+  exclude:
+    - config.json
+    - .env
+  include:
+    - src/schema.graphql
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  timeout: 60
+  memorySize: 512
+  stage: dev
+  versionFunctions: ${self:custom.enableVersioning.dev}
+  region: us-east-1
+  tracing:
+    apiGateway: true
+    lambda: true
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - '*'
+      Resource: '*'
+  environment:
+    ENVIRONMENT: ${opt:stage}
+    STAGE: ${self:provider.stage}
+    REGION: ${self:provider.region}
+    EXAMPLE_TABLE: "someName"
+plugins: # List of plugins of use on application
+  - serverless-webpack
+  - serverless-offline
+  - serverless-domain-manager
+
+functions:
+  graphql: # Lambda function name
+    handler: src/adapters/graphql/handler.server
+    events:
+      - http:
+          path: graphql
+          method: post
+          cors: true
+
+custom:
+  enableVersioning:
+    prod: true
+    dev: false
+    offline: false
+    uat: false
+  customDomain:
+    domainName: 'someDomainNameIfNeeded'
+    certificateName: 'ACM certificate name'
+    basePath: 'somePath'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    enabled: false
+  defaultStage: dev

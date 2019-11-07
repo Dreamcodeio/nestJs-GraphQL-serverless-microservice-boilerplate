@@ -1,0 +1,39 @@
+enum EventTypeEnum {
+	ENUMEXAMPLE
+}
+
+input ExampleInput {
+	someRequiredID: ID!
+	someId: ID
+}
+
+
+type ExampleConnection {
+  edges: [ExampleEdge]
+  pageInfo: ExamplePageInfo
+}
+
+type ExampleEdge {
+  node: Example
+}
+
+type ExamplePageInfo {
+  hasNextPage: Boolean!
+  totalCount: Int
+  lastCursor: String
+}
+
+
+type Example {
+	someId: ID!
+	createdAt: String
+}
+
+
+type Query {
+  getExamples(search: ExampleInput!, first: Int, after: String): ExampleConnection
+}
+
+type Mutation {
+  setMockMutation(someMock: String): String
+}
